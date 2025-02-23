@@ -12,7 +12,20 @@
     "test": "jest --runInBand --detectOpenHandles",
     "prettier:write": "npx prettier --write .",
     "prettier:check": "npx prettier --check ."
-  },
+ 
+},
+"husky": {
+  "hooks": {
+    "pre-commit": "lint-staged"
+  }
+},
+"lint-staged": {
+  "*.ts": [
+    "eslint --fix",
+    "prettier --write",
+    "git add"
+  ]
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
