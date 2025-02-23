@@ -41,7 +41,11 @@ describe("📚 Book API Tests", () => {
   });
 
   it("✅ Should fetch the list of books", async () => {
-    await Book.create({ title: "Book 1", author: "Author 1", pdfUrl: "/test.pdf" });
+    await Book.create({
+      title: "Book 1",
+      author: "Author 1",
+      pdfUrl: "/test.pdf",
+    });
 
     const response = await request(app).get("/api/books");
 
@@ -50,7 +54,11 @@ describe("📚 Book API Tests", () => {
   });
 
   it("✅ Should delete a book", async () => {
-    const book = await Book.create({ title: "Book to Delete", author: "Author X", pdfUrl: "/delete.pdf" });
+    const book = await Book.create({
+      title: "Book to Delete",
+      author: "Author X",
+      pdfUrl: "/delete.pdf",
+    });
 
     const response = await request(app).delete(`/api/books/${book._id}`);
 

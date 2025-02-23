@@ -16,7 +16,7 @@ const bookSchema = new Schema<IBook>(
     pdfUrl: { type: String, required: true },
     lastModified: { type: Date, default: Date.now },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Book = mongoose.model<IBook>("Book", bookSchema);

@@ -33,7 +33,10 @@ export const addBook = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const deleteBook = async (req: Request, res: Response): Promise<void> => {
+export const deleteBook = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const book = await Book.findByIdAndDelete(req.params.id);
 
