@@ -28,7 +28,7 @@ app.use(cors());
 
 setupSwagger(app); // ✅ Setup Swagger documentation
 
-app.get("/", (req, res) => {
+app.get("/", (req, res) => 
   res.send("📚 Book Management API is running...");
 });
 
