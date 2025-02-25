@@ -1,8 +1,13 @@
-import { Response } from "express";
-import Book, { IBook } from "../Models/book";
-import { AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
+import { type Response } from "express";
+import Book, { type IBook } from "../Models/book";
+import { type AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
 
-// 📌 Récupérer tous les livres de l'utilisateur connecté
+
+/** 
+ * Récupérer tous les livres de l'utilisateur 
+ * @param req AuthRequest
+ * @param res Response 
+*/
 export const getBooks = async (
   req: AuthRequest,
   res: Response,
@@ -16,7 +21,11 @@ export const getBooks = async (
   }
 };
 
-// 📌 Ajouter un livre pour l'utilisateur connecté
+/** 
+ * Ajouter un livre 
+ * @param req AuthRequest 
+ * @param res Response
+*/
 export const addBook = async (
   req: AuthRequest,
   res: Response,
@@ -48,7 +57,13 @@ export const addBook = async (
   }
 };
 
-// 📌 Supprimer un livre (seulement si l'utilisateur en est le propriétaire)
+
+
+/**
+ *  Supprimer un livre
+ * @param req  AuthRequest
+ * @param res  Response
+ */
 export const deleteBook = async (
   req: AuthRequest,
   res: Response,
@@ -77,7 +92,12 @@ export const deleteBook = async (
   }
 };
 
-// 📌 Mettre à jour un livre (seulement si l'utilisateur en est le propriétaire
+
+/**
+ *  Mettre à jour un livre
+ * @param req  AuthRequest
+ * @param res  Response
+ */
 export const updateBook = async (
   req: AuthRequest,
   res: Response,
@@ -111,7 +131,12 @@ export const updateBook = async (
   }
 };
 
-// 📌 Récupérer un livre (seulement si l'utilisateur en est le propriétaire
+
+/**
+ *  Récupérer un livre
+ * @param req  AuthRequest
+ * @param res  Response
+ */
 export const getBook = async (
   req: AuthRequest,
   res: Response,

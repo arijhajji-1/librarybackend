@@ -1,3 +1,5 @@
+/* eslint-env node */
+/* global module */
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   preset: "ts-jest", // Use ts-jest to handle TypeScript

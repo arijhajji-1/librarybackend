@@ -1,4 +1,9 @@
-import mongoose, { Schema, Model, Document, Types } from "mongoose";
+import mongoose, {
+  Schema,
+  type Model,
+  type Document,
+  type Types,
+} from "mongoose";
 import bcrypt from "bcryptjs";
 
 // Définition de l'interface User

@@ -1,21 +1,27 @@
-import { Request, Response, NextFunction } from "express";
-import { UserModel, IUser } from "../Models/user";
+import { type Request, type Response } from "express";
+import { UserModel, type IUser } from "../Models/user";
 import mongoose from "mongoose";
-import { AuthRequest } from "../middlewares/authMiddleware";
+import { type AuthRequest } from "../middlewares/authMiddleware";
 import jwt from "jsonwebtoken";
 
-// Génération du JWT
+/**
+ *  Générer un token JWT
+ * @param user  IUser
+ */
 const generateToken = (user: IUser) => {
   return jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
     expiresIn: "30d",
   });
 };
 
-// 📌 Inscription d'un nouvel utilisateur
+/**
+ *  Enregistrer un nouvel utilisateur
+ * @param req  Request
+ * @param res  Response
+ */
 export const registerUser = async (
   req: Request,
   res: Response,
-  next: NextFunction,
 ): Promise<void> => {
   try {
     const { name, email, password } = req.body;
@@ -37,7 +43,6 @@ export const registerUser = async (
       _id: user._id,
       name: user.name,
       email: user.email,
-      token: generateToken(user),
     });
   } catch (error) {
     console.error("❌ Erreur serveur:", error);
@@ -45,7 +50,11 @@ export const registerUser = async (
   }
 };
 
-// 📌 Connexion utilisateur
+/**
+ *  Connecter un utilisateur
+ * @param req  Request
+ * @param res  Response
+ */
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -66,7 +75,11 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-// 📌 Ajouter un livre aux favoris
+/**
+ *  Récupérer les informations de l'utilisateur
+ * @param req  AuthRequest
+ * @param res  Response
+ */
 export const addFavoriteBook = async (
   req: AuthRequest,
   res: Response,
@@ -103,7 +116,11 @@ export const addFavoriteBook = async (
   }
 };
 
-// 📌 Supprimer un livre des favoris
+/**
+ *  Supprimer un livre des favoris
+ * @param req  AuthRequest
+ * @param res  Response
+ */
 export const removeFavoriteBook = async (
   req: AuthRequest,
   res: Response,
@@ -135,7 +152,11 @@ export const removeFavoriteBook = async (
   }
 };
 
-// 📌 Récupérer les favoris de l'utilisateur
+/**
+ *  Récupérer les livres favoris de l'utilisateur
+ * @param req  AuthRequest
+ * @param res  Response
+ */
 export const getFavoriteBooks = async (
   req: AuthRequest,
   res: Response,

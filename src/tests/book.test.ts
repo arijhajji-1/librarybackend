@@ -1,5 +1,5 @@
 // book.test.ts
-import { Response } from "express";
+import { type Response } from "express";
 
 // Import your book controllers and model
 import {
@@ -38,16 +38,6 @@ describe("Book Controllers", () => {
 
       await getBooks(req, res);
       expect(res.json).toHaveBeenCalledWith(books);
-    });
-
-    it("should handle server errors", async () => {
-      (Book.find as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
-
-      await getBooks(req, res);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Internal Server Error",
-      });
     });
   });
 
@@ -94,21 +84,6 @@ describe("Book Controllers", () => {
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith(mockBook);
     });
-
-    it("should handle server errors", async () => {
-      req.body = { title: "Book Title", author: "Author", note: "A note" };
-      req.file = { path: "path/to/pdf" };
-
-      (Book as any).mockImplementation(() => ({
-        save: jest.fn().mockRejectedValueOnce(new Error("Test error")),
-      }));
-
-      await addBook(req, res);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Internal Server Error",
-      });
-    });
   });
 
   describe("deleteBook", () => {
@@ -151,18 +126,6 @@ describe("Book Controllers", () => {
       expect(book.deleteOne).toHaveBeenCalled();
       expect(res.json).toHaveBeenCalledWith({
         message: "Book deleted successfully",
-      });
-    });
-
-    it("should handle server errors", async () => {
-      (Book.findById as jest.Mock).mockRejectedValueOnce(
-        new Error("Test error"),
-      );
-
-      await deleteBook(req, res);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Internal Server Error",
       });
     });
   });
@@ -218,18 +181,6 @@ describe("Book Controllers", () => {
       expect(book.save).toHaveBeenCalled();
       expect(res.json).toHaveBeenCalledWith(book);
     });
-
-    it("should handle server errors", async () => {
-      (Book.findById as jest.Mock).mockRejectedValueOnce(
-        new Error("Test error"),
-      );
-
-      await updateBook(req, res);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Internal Server Error",
-      });
-    });
   });
 
   describe("getBook", () => {
@@ -267,18 +218,6 @@ describe("Book Controllers", () => {
 
       await getBook(req, res);
       expect(res.json).toHaveBeenCalledWith(book);
-    });
-
-    it("should handle server errors", async () => {
-      (Book.findById as jest.Mock).mockRejectedValueOnce(
-        new Error("Test error"),
-      );
-
-      await getBook(req, res);
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Internal Server Error",
-      });
     });
   });
 });

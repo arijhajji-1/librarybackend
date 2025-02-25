@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+import mongoose, { type Document, Schema, type Types } from "mongoose";
 
 // Interface TypeScript pour Book
 interface IBook extends Document {

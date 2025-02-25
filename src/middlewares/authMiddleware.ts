@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../Models/user";
 
@@ -23,7 +23,7 @@ export const protect = async (
       req.user = await UserModel.findById(decoded.id).select("-password"); // ✅ Assigne l'utilisateur à `req.user`
 
       next();
-    } catch (error) {
+    } catch {
       res.status(401).json({ message: "Accès non autorisé, token invalide" });
     }
   } else {
