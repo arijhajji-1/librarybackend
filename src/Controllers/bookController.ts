@@ -2,12 +2,11 @@ import { type Response } from "express";
 import Book, { type IBook } from "../Models/book";
 import { type AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
 
-
-/** 
- * Récupérer tous les livres de l'utilisateur 
+/**
+ * Récupérer tous les livres de l'utilisateur
  * @param req AuthRequest
- * @param res Response 
-*/
+ * @param res Response
+ */
 export const getBooks = async (
   req: AuthRequest,
   res: Response,
@@ -21,11 +20,11 @@ export const getBooks = async (
   }
 };
 
-/** 
- * Ajouter un livre 
- * @param req AuthRequest 
+/**
+ * Ajouter un livre
+ * @param req AuthRequest
  * @param res Response
-*/
+ */
 export const addBook = async (
   req: AuthRequest,
   res: Response,
@@ -56,8 +55,6 @@ export const addBook = async (
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-
 
 /**
  *  Supprimer un livre
@@ -91,7 +88,6 @@ export const deleteBook = async (
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 /**
  *  Mettre à jour un livre
@@ -130,7 +126,6 @@ export const updateBook = async (
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 /**
  *  Récupérer un livre
