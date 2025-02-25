@@ -20,7 +20,7 @@ const bookSchema = new Schema<IBook>(
     lastModified: { type: Date, default: Date.now },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true }, // ✅ Référence User
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // ✅ Correction : Convertir `user` en string lors de la conversion JSON

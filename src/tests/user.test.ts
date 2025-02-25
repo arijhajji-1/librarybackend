@@ -42,21 +42,35 @@ describe("User Controllers", () => {
 
       await registerUser(req as Request, res, next);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Tous les champs sont obligatoires" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Tous les champs sont obligatoires",
+      });
     });
 
     it("should return 400 if user already exists", async () => {
-      req.body = { name: "John", email: "john@example.com", password: "123456" };
+      req.body = {
+        name: "John",
+        email: "john@example.com",
+        password: "123456",
+      };
       // simulate that a user is found
-      (UserModel.findOne as jest.Mock).mockResolvedValueOnce({ email: "john@example.com" });
+      (UserModel.findOne as jest.Mock).mockResolvedValueOnce({
+        email: "john@example.com",
+      });
 
       await registerUser(req as Request, res, next);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Cet utilisateur existe déjà" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Cet utilisateur existe déjà",
+      });
     });
 
     it("should register a new user successfully", async () => {
-      req.body = { name: "John", email: "john@example.com", password: "123456" };
+      req.body = {
+        name: "John",
+        email: "john@example.com",
+        password: "123456",
+      };
       // simulate that no user exists yet
       (UserModel.findOne as jest.Mock).mockResolvedValueOnce(null);
 
@@ -84,12 +98,20 @@ describe("User Controllers", () => {
     });
 
     it("should handle server errors", async () => {
-      req.body = { name: "John", email: "john@example.com", password: "123456" };
-      (UserModel.findOne as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
+      req.body = {
+        name: "John",
+        email: "john@example.com",
+        password: "123456",
+      };
+      (UserModel.findOne as jest.Mock).mockRejectedValueOnce(
+        new Error("Test error"),
+      );
 
       await registerUser(req as Request, res, next);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Erreur interne du serveur" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Erreur interne du serveur",
+      });
     });
   });
 
@@ -137,12 +159,16 @@ describe("User Controllers", () => {
 
       await loginUser(req as Request, res);
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ message: "Email ou mot de passe invalide" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Email ou mot de passe invalide",
+      });
     });
 
     it("should handle server errors", async () => {
       req.body = { email: "john@example.com", password: "123456" };
-      (UserModel.findOne as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
+      (UserModel.findOne as jest.Mock).mockRejectedValueOnce(
+        new Error("Test error"),
+      );
 
       await loginUser(req as Request, res);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -170,7 +196,9 @@ describe("User Controllers", () => {
       req.body = { bookId: "invalidId" };
       await addFavoriteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "ID du livre invalide" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "ID du livre invalide",
+      });
     });
 
     it("should return 401 if user is not found", async () => {
@@ -179,7 +207,9 @@ describe("User Controllers", () => {
 
       await addFavoriteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non trouvé" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Utilisateur non trouvé",
+      });
     });
 
     it("should return 400 if the book is already in favorites", async () => {
@@ -193,7 +223,9 @@ describe("User Controllers", () => {
 
       await addFavoriteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Livre déjà ajouté aux favoris" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Livre déjà ajouté aux favoris",
+      });
     });
 
     it("should add a book to favorites successfully", async () => {
@@ -215,11 +247,15 @@ describe("User Controllers", () => {
 
     it("should handle server errors", async () => {
       req.body = { bookId: new mongoose.Types.ObjectId().toString() };
-      (UserModel.findById as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
+      (UserModel.findById as jest.Mock).mockRejectedValueOnce(
+        new Error("Test error"),
+      );
 
       await addFavoriteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Erreur interne du serveur" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Erreur interne du serveur",
+      });
     });
   });
 
@@ -242,7 +278,9 @@ describe("User Controllers", () => {
 
       await removeFavoriteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non trouvé" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Utilisateur non trouvé",
+      });
     });
 
     it("should return 400 if the book is not in favorites", async () => {
@@ -255,7 +293,9 @@ describe("User Controllers", () => {
 
       await removeFavoriteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Livre non trouvé dans les favoris" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Livre non trouvé dans les favoris",
+      });
     });
 
     it("should remove a favorite book successfully", async () => {
@@ -276,13 +316,14 @@ describe("User Controllers", () => {
 
     it("should handle server errors", async () => {
       (UserModel.findById as jest.Mock).mockReturnValueOnce({
-        populate: jest.fn().mockRejectedValueOnce(new Error("Test error"))
+        populate: jest.fn().mockRejectedValueOnce(new Error("Test error")),
       });
       await getFavoriteBooks(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Erreur interne du serveur" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Erreur interne du serveur",
+      });
     });
-    
   });
 
   describe("getFavoriteBooks", () => {
@@ -299,13 +340,17 @@ describe("User Controllers", () => {
       (UserModel.findById as jest.Mock).mockResolvedValueOnce(null);
       await getFavoriteBooks(req, res);
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non trouvé" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Utilisateur non trouvé",
+      });
     });
 
     it("should return favorite books successfully", async () => {
       const mockUser = {
         favorites: ["book1", "book2"],
-        populate: jest.fn().mockResolvedValueOnce({ favorites: ["book1", "book2"] }),
+        populate: jest
+          .fn()
+          .mockResolvedValueOnce({ favorites: ["book1", "book2"] }),
       };
       // Simulate chaining with populate
       (UserModel.findById as jest.Mock).mockReturnValueOnce({
@@ -317,10 +362,14 @@ describe("User Controllers", () => {
     });
 
     it("should handle server errors", async () => {
-      (UserModel.findById as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
+      (UserModel.findById as jest.Mock).mockRejectedValueOnce(
+        new Error("Test error"),
+      );
       await getFavoriteBooks(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Erreur interne du serveur" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Erreur interne du serveur",
+      });
     });
   });
 });

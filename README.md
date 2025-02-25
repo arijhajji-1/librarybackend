@@ -6,6 +6,7 @@ Il est construit avec **Node.js, Express, TypeScript et MongoDB** et prend en ch
 ---
 
 ## 🚀 Fonctionnalités
+
 - 📖 **Gestion des livres** : Ajouter, lister, modifier et supprimer des livres.
 - 📂 **Upload de fichiers** : Enregistrer des livres en format PDF.
 - 🔒 **Validation des données** avant enregistrement.
@@ -17,6 +18,7 @@ Il est construit avec **Node.js, Express, TypeScript et MongoDB** et prend en ch
 ---
 
 ## 🏗 **Technologies Utilisées**
+
 - **Backend** : Node.js, Express, TypeScript
 - **Base de données** : MongoDB (Mongoose)
 - **Upload de fichiers** : Multer
@@ -28,19 +30,26 @@ Il est construit avec **Node.js, Express, TypeScript et MongoDB** et prend en ch
 ---
 
 ## 🔧 **Installation et Configuration**
+
 ### 1️⃣ **Cloner le projet**
+
 ```sh
 git clone https://github.com/votre-utilisateur/backendbook.git
 cd backendbook
 ```
+
 ### 2️⃣ **Installer les dépendances**
+
 ```sh
 pnpm install
 ```
+
 ### 3️⃣ **Configurer les variables d'environnement**
+
 Créer un fichier .env à la racine et y ajouter :
 
 .env
+
 ```sh
 MONGODB_URI="mongodb+srv://book:library2025@library.yaidr.mongodb.net/?retryWrites=true&w=majority&appName=library"
 PORT=5000
@@ -56,7 +65,6 @@ pnpm dev
 
 #### 🚀 Mode Production
 
-
 ```sh
 pnpm build
 pnpm start
@@ -65,6 +73,7 @@ pnpm start
 ---
 
 ## 🐳 **Exécution avec Docker**
+
 Assurez-vous que **Docker** est installé, puis exécutez :
 
 ```sh
@@ -72,20 +81,21 @@ docker-compose up --build
 ```
 
 ✅ Cette commande va :
+
 - Lancer **l’API backend** sur `http://localhost:5000`
 - Démarrer un **conteneur MongoDB**.
 
 ---
 
 ## 🔥 **Endpoints de l’API**
-| Méthode  | Endpoint          | Description                |
-|----------|------------------|----------------------------|
-| `GET`    | `/api/books`     | Récupérer tous les livres  |
-| `POST`   | `/api/books/add` | Ajouter un livre (PDF)     |
-| `DELETE` | `/api/books/:id` | Supprimer un livre         |
+
+| Méthode  | Endpoint         | Description               |
+| -------- | ---------------- | ------------------------- |
+| `GET`    | `/api/books`     | Récupérer tous les livres |
+| `POST`   | `/api/books/add` | Ajouter un livre (PDF)    |
+| `DELETE` | `/api/books/:id` | Supprimer un livre        |
 
 🛠 **Documentation complète disponible sur :**
-
 
 bash
 http://localhost:5000/api/docs
@@ -94,8 +104,8 @@ http://localhost:5000/api/docs
 ---
 
 ## ✅ **Exécution des tests**
-Lancer les tests unitaires avec :
 
+Lancer les tests unitaires avec :
 
 ```sh
 
@@ -105,32 +115,27 @@ pnpm test
 ---
 
 ## 🛡 **Husky - Vérification avant Commit**
+
 Ce projet utilise **Husky** pour garantir un code propre :
+
 - **Prettier & ESLint** s'exécutent avant chaque commit.
 - **Les tests doivent réussir** avant de pouvoir pousser du code.
 
 Exécuter manuellement :
-
 
 ---
 
 ## 🛡 **Husky - Vérification avant Commit**
+
 Ce projet utilise **Husky** pour garantir un code propre :
+
 - **Prettier & ESLint** s'exécutent avant chaque commit.
 - **Les tests doivent réussir** avant de pouvoir pousser du code.
 
 Exécuter manuellement :
+
 ```sh
 
 pnpm lint
 pnpm prettier:check
 ```
-
-
-
-
-
-
-
-
-

@@ -1,5 +1,5 @@
 // book.test.ts
-import {  Response } from "express";
+import { Response } from "express";
 
 // Import your book controllers and model
 import {
@@ -45,7 +45,9 @@ describe("Book Controllers", () => {
 
       await getBooks(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+      });
     });
   });
 
@@ -65,7 +67,9 @@ describe("Book Controllers", () => {
 
       await addBook(req, res);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Title, author, and PDF are required" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Title, author, and PDF are required",
+      });
     });
 
     it("should add a book successfully", async () => {
@@ -101,7 +105,9 @@ describe("Book Controllers", () => {
 
       await addBook(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+      });
     });
   });
 
@@ -129,7 +135,9 @@ describe("Book Controllers", () => {
 
       await deleteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(403);
-      expect(res.json).toHaveBeenCalledWith({ message: "You are not authorized to delete this book" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "You are not authorized to delete this book",
+      });
     });
 
     it("should delete the book successfully", async () => {
@@ -141,15 +149,21 @@ describe("Book Controllers", () => {
 
       await deleteBook(req, res);
       expect(book.deleteOne).toHaveBeenCalled();
-      expect(res.json).toHaveBeenCalledWith({ message: "Book deleted successfully" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Book deleted successfully",
+      });
     });
 
     it("should handle server errors", async () => {
-      (Book.findById as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
+      (Book.findById as jest.Mock).mockRejectedValueOnce(
+        new Error("Test error"),
+      );
 
       await deleteBook(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+      });
     });
   });
 
@@ -181,7 +195,9 @@ describe("Book Controllers", () => {
 
       await updateBook(req, res);
       expect(res.status).toHaveBeenCalledWith(403);
-      expect(res.json).toHaveBeenCalledWith({ message: "You are not authorized to update this book" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "You are not authorized to update this book",
+      });
     });
 
     it("should update the book successfully", async () => {
@@ -204,11 +220,15 @@ describe("Book Controllers", () => {
     });
 
     it("should handle server errors", async () => {
-      (Book.findById as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
+      (Book.findById as jest.Mock).mockRejectedValueOnce(
+        new Error("Test error"),
+      );
 
       await updateBook(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+      });
     });
   });
 
@@ -236,7 +256,9 @@ describe("Book Controllers", () => {
 
       await getBook(req, res);
       expect(res.status).toHaveBeenCalledWith(403);
-      expect(res.json).toHaveBeenCalledWith({ message: "You are not authorized to view this book" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "You are not authorized to view this book",
+      });
     });
 
     it("should return the book successfully", async () => {
@@ -248,11 +270,15 @@ describe("Book Controllers", () => {
     });
 
     it("should handle server errors", async () => {
-      (Book.findById as jest.Mock).mockRejectedValueOnce(new Error("Test error"));
+      (Book.findById as jest.Mock).mockRejectedValueOnce(
+        new Error("Test error"),
+      );
 
       await getBook(req, res);
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ message: "Internal Server Error" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Internal Server Error",
+      });
     });
   });
 });

@@ -1,5 +1,11 @@
 import express from "express";
-import { registerUser, loginUser,addFavoriteBook,removeFavoriteBook,getFavoriteBooks } from "../Controllers/userController";
+import {
+  registerUser,
+  loginUser,
+  addFavoriteBook,
+  removeFavoriteBook,
+  getFavoriteBooks,
+} from "../Controllers/userController";
 import { protect } from "../middlewares/authMiddleware"; // ✅ Protection avec JWT
 
 const router = express.Router();

@@ -1,5 +1,10 @@
 import express from "express";
-import { getBooks, deleteBook, addBook,updateBook } from "../Controllers/bookController";
+import {
+  getBooks,
+  deleteBook,
+  addBook,
+  updateBook,
+} from "../Controllers/bookController";
 import upload from "../middlewares/uploadMiddleware";
 import { protect } from "../middlewares/authMiddleware"; // ✅ Protection avec JWT
 
@@ -206,6 +211,5 @@ router.put("/update/:id", protect, updateBook);
  *         description: Livre non trouvé
  */
 router.delete("/delete/:id", protect, deleteBook);
-
 
 export default router;

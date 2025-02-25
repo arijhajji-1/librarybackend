@@ -15,7 +15,6 @@
     "ci": "pnpm run lint && pnpm run prettier-write && pnpm run build",
     "lci": " pnpm run prettier:write"
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",

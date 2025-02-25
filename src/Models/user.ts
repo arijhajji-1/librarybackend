@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Document,Types } from "mongoose";
+import mongoose, { Schema, Model, Document, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 
 // Définition de l'interface User
@@ -18,9 +18,8 @@ const userSchema = new Schema<IUser>(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     favorites: [{ type: Schema.Types.ObjectId, ref: "Book" }], // ✅ Référence aux livres favoris
-
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Hashage du mot de passe avant sauvegarde
@@ -37,6 +36,9 @@ userSchema.methods.matchPassword = async function (enteredPassword: string) {
 };
 
 // Création du modèle
-export const UserModel: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+export const UserModel: Model<IUser> = mongoose.model<IUser>(
+  "User",
+  userSchema,
+);
 
 export default UserModel;
