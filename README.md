@@ -89,11 +89,12 @@ docker-compose up --build
 
 ## 🔥 **Endpoints de l’API**
 
-| Méthode  | Endpoint         | Description               |
-| -------- | ---------------- | ------------------------- |
-| `GET`    | `/api/books`     | Récupérer tous les livres |
-| `POST`   | `/api/books/add` | Ajouter un livre (PDF)    |
-| `DELETE` | `/api/books/:id` | Supprimer un livre        |
+| Méthode  | Endpoint                | Description               |
+| -------- | ----------------        | ------------------------- |
+| `GET`    | `/api/books`            | Récupérer tous les livres |
+| `POST`   | `/api/books/add`        | Ajouter un livre (PDF)    |
+| `DELETE` | `/api/books/delete/:id` | Supprimer un livre        |
+| `UPDATE` | `/api/books/update/:id` | mise a jour un livre      |
 
 🛠 **Documentation complète disponible sur :**
 
