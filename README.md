@@ -51,8 +51,9 @@ Créer un fichier .env à la racine et y ajouter :
 .env
 
 ```sh
-MONGODB_URI="mongodb+srv://book:library2025@library.yaidr.mongodb.net/?retryWrites=true&w=majority&appName=library"
+MONGODB_URI="mongodb+srv://"
 PORT=5000
+JWT_SECRET="define jwt secret"
 ```
 
 ### 4️⃣ **Lancer le projet**
@@ -87,14 +88,28 @@ docker-compose up --build
 
 ---
 
-## 🔥 **Endpoints de l’API**
+## 🔥 Endpoints de l’API
 
-| Méthode  | Endpoint                | Description               |
-| -------- | ----------------        | ------------------------- |
-| `GET`    | `/api/books`            | Récupérer tous les livres |
-| `POST`   | `/api/books/add`        | Ajouter un livre (PDF)    |
-| `DELETE` | `/api/books/delete/:id` | Supprimer un livre        |
-| `UPDATE` | `/api/books/update/:id` | mise a jour un livre      |
+### Utilisateurs
+
+| Méthode  | Endpoint                      | Description                                     |
+| -------- | ----------------------------- | ----------------------------------------------- |
+| `POST`   | `/api/users/register`         | Enregistrer un nouvel utilisateur               |
+| `POST`   | `/api/users/login`            | Connexion d'un utilisateur                      |
+| `POST`   | `/api/users/favorites/add`    | Ajouter un livre aux favoris de l'utilisateur   |
+| `DELETE` | `/api/users/favorites/remove` | Supprimer un livre des favoris de l'utilisateur |
+| `GET`    | `/api/users/favorites`        | Récupérer les livres favoris de l'utilisateur   |
+|  |
+
+### Livres
+
+| Méthode  | Endpoint                | Description                                |
+| -------- | ----------------------- | ------------------------------------------ |
+| `GET`    | `/api/books`            | Récupérer tous les livres de l'utilisateur |
+| `GET`    | `/api/books/:id`        | Récupérer un livre spécifique              |
+| `POST`   | `/api/books/add`        | Ajouter un livre (PDF)                     |
+| `PUT`    | `/api/books/update/:id` | Mettre à jour un livre                     |
+| `DELETE` | `/api/books/delete/:id` | Supprimer un livre                         |
 
 🛠 **Documentation complète disponible sur :**
 
