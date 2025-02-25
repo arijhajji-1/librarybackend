@@ -99,7 +99,7 @@ docker-compose up --build
 | `POST`   | `/api/users/favorites/add`    | Ajouter un livre aux favoris de l'utilisateur   |
 | `DELETE` | `/api/users/favorites/remove` | Supprimer un livre des favoris de l'utilisateur |
 | `GET`    | `/api/users/favorites`        | Récupérer les livres favoris de l'utilisateur   |
-|  |
+|          |
 
 ### Livres
 
