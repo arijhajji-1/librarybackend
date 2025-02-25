@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import bookRoutes from "./Routes/bookRoutes";
+import userRoutes from "./Routes/userRoutes";
 import mongoose from "mongoose";
 import { setupSwagger } from "./swagger";
 
@@ -33,6 +34,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/books", bookRoutes);
+
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV !== "test") {

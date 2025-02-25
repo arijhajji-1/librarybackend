@@ -1,18 +1,29 @@
 import express from "express";
-import { getBooks, deleteBook, addBook } from "../Controllers/bookController";
+import { getBooks, deleteBook, addBook,updateBook } from "../Controllers/bookController";
 import upload from "../middlewares/uploadMiddleware";
+import { protect } from "../middlewares/authMiddleware"; // ✅ Protection avec JWT
 
 const router = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Livres
+ *   description: Gestion des livres de la bibliothèque
+ */
+
+/**
+ * @swagger
  * /api/books:
  *   get:
- *     summary: Get all books
- *     description: Fetch a list of all books in the library.
+ *     summary: Récupérer les livres de l'utilisateur
+ *     tags: [Livres]
+ *     description: Retourne la liste des livres appartenant à l'utilisateur connecté.
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of books
+ *         description: Liste des livres
  *         content:
  *           application/json:
  *             schema:
@@ -32,21 +43,31 @@ const router = express.Router();
  *                   pdfUrl:
  *                     type: string
  *                     example: "/uploads/gatsby.pdf"
+ *                   user:
+ *                     type: string
+ *                     example: "65d2f7..."
  */
-router.get("/", getBooks);
+router.get("/", protect, getBooks);
 
 /**
  * @swagger
  * /api/books/add:
  *   post:
- *     summary: Add a new book
- *     description: Upload a new book with a PDF file.
+ *     summary: Ajouter un nouveau livre
+ *     tags: [Livres]
+ *     description: Upload un livre et l'associe à l'utilisateur connecté.
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *               - author
+ *               - pdfUrl
  *             properties:
  *               title:
  *                 type: string
@@ -62,7 +83,7 @@ router.get("/", getBooks);
  *                 format: binary
  *     responses:
  *       201:
- *         description: Book added successfully
+ *         description: Livre ajouté avec succès
  *         content:
  *           application/json:
  *             schema:
@@ -77,28 +98,114 @@ router.get("/", getBooks);
  *                 author:
  *                   type: string
  *                   example: "George Orwell"
+ *                 note:
+ *                   type: string
+ *                   example: "Dystopian classic"
+ *                 pdfUrl:
+ *                   type: string
+ *                   example: "/uploads/1984.pdf"
+ *                 user:
+ *                   type: string
+ *                   example: "65d2f7..."
  */
-router.post("/add", upload.single("pdfUrl"), addBook);
+router.post("/add", upload.single("pdfUrl"), protect, addBook);
 
 /**
  * @swagger
- * /api/books/{id}:
- *   delete:
- *     summary: Delete a book
- *     description: Remove a book from the collection using its ID.
+ * /api/books/update/{id}:
+ *   put:
+ *     summary: Mettre à jour un livre
+ *     tags: [Livres]
+ *     description: Mettre à jour un livre appartenant à l'utilisateur connecté.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: ID du livre à mettre à jour
  *         schema:
  *           type: string
- *         example: "650f1e7a2d7a7a0d88b10b2a"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "1984 - Nouvelle Édition"
+ *               author:
+ *                 type: string
+ *                 example: "George Orwell"
+ *               note:
+ *                 type: string
+ *                 example: "Version mise à jour du livre classique"
+ *               pdfUrl:
+ *                 type: string
+ *                 example: "/uploads/1984-updated.pdf"
  *     responses:
  *       200:
- *         description: Book deleted successfully
+ *         description: Livre mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "6510f1e7b4c8d3e7a0d8b10b"
+ *                 title:
+ *                   type: string
+ *                   example: "1984 - Nouvelle Édition"
+ *                 author:
+ *                   type: string
+ *                   example: "George Orwell"
+ *                 note:
+ *                   type: string
+ *                   example: "Version mise à jour du livre classique"
+ *                 pdfUrl:
+ *                   type: string
+ *                   example: "/uploads/1984-updated.pdf"
+ *       400:
+ *         description: Données invalides ou champs manquants
+ *       401:
+ *         description: Accès non autorisé, l'utilisateur doit être connecté
+ *       403:
+ *         description: L'utilisateur n'a pas le droit de modifier ce livre
  *       404:
- *         description: Book not found
+ *         description: Livre non trouvé
  */
-router.delete("/:id", deleteBook);
+router.put("/update/:id", protect, updateBook);
+
+/**
+ * @swagger
+ * /api/books/delete/{id}:
+ *   delete:
+ *     summary: Supprimer un livre
+ *     tags: [Livres]
+ *     description: Supprime un livre appartenant à l'utilisateur connecté.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du livre à supprimer
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Livre supprimé avec succès
+ *       401:
+ *         description: Accès non autorisé, l'utilisateur doit être connecté
+ *       403:
+ *         description: L'utilisateur n'a pas le droit de supprimer ce livre
+ *       404:
+ *         description: Livre non trouvé
+ */
+router.delete("/delete/:id", protect, deleteBook);
+
 
 export default router;
