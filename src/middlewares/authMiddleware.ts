@@ -1,6 +1,6 @@
 import { type Request, type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import {UserModel } from "../Models/user";
+import { UserModel } from "../Models/user";
 import type { IUserDocument } from "../Types/user";
 
 // Define the shape of the decoded JWT payload.
@@ -19,7 +19,7 @@ export interface AuthRequest extends Request {
 export const protect = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   let token: string | undefined;
 
@@ -30,12 +30,14 @@ export const protect = async (
       // Verify the token and cast it to our DecodedToken interface.
       const decoded = jwt.verify(
         token,
-        process.env.JWT_SECRET as string
+        process.env.JWT_SECRET as string,
       ) as DecodedToken;
 
       // Find the user by ID and assign it to req.user.
       // Casting here ensures the result conforms to our IUser interface.
-      req.user = (await UserModel.findById(decoded.id).select("-password")) as unknown as IUserDocument;
+      req.user = (await UserModel.findById(decoded.id).select(
+        "-password",
+      )) as unknown as IUserDocument;
 
       next();
     } catch {

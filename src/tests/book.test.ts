@@ -28,9 +28,10 @@ describe("Book Controllers", () => {
     let res: Response;
 
     beforeEach(() => {
-      
       req = {
-        user: { _id: new mongoose.Types.ObjectId("507f1f77bcf86cd799439011") } as unknown as UserDocument
+        user: {
+          _id: new mongoose.Types.ObjectId("507f1f77bcf86cd799439011"),
+        } as unknown as UserDocument,
       };
       res = createResponse();
       jest.clearAllMocks();
@@ -38,8 +39,20 @@ describe("Book Controllers", () => {
 
     it("should return the list of books for the user", async () => {
       const books: Book[] = [
-        {  title: "Book 1", author: "Author 1", pdfUrl: "path/to/pdf",modified: new Date(),user: "userId" },
-        {  title: "Book 2", author: "Author 2", pdfUrl: "path/to/pdf" ,modified: new Date(),user: "userId"},
+        {
+          title: "Book 1",
+          author: "Author 1",
+          pdfUrl: "path/to/pdf",
+          modified: new Date(),
+          user: "userId",
+        },
+        {
+          title: "Book 2",
+          author: "Author 2",
+          pdfUrl: "path/to/pdf",
+          modified: new Date(),
+          user: "userId",
+        },
       ];
       (BookModel.find as jest.Mock).mockResolvedValueOnce(books);
 
@@ -58,10 +71,13 @@ describe("Book Controllers", () => {
       jest.clearAllMocks();
     });
 
-   
-
     it("should add a book successfully", async () => {
-      req.body = { title: "Book Title", author: "Author", note: "A note", pdfUrl: "path/to/pdf" };
+      req.body = {
+        title: "Book Title",
+        author: "Author",
+        note: "A note",
+        pdfUrl: "path/to/pdf",
+      };
 
       // Create a fake book instance with a save method
       const mockBook = {
@@ -89,7 +105,7 @@ describe("Book Controllers", () => {
     let res: Response;
 
     beforeEach(() => {
-      req = { params: { id: "bookId" }, user: { _id : "userId" } };
+      req = { params: { id: "bookId" }, user: { _id: "userId" } };
       res = createResponse();
       jest.clearAllMocks();
     });

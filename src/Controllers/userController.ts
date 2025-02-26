@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import type { UserDocument} from "../Models/user";
+import type { UserDocument } from "../Models/user";
 import { UserModel } from "../Models/user";
 import mongoose from "mongoose";
 import { type AuthRequest } from "../middlewares/authMiddleware";
@@ -43,7 +43,7 @@ export const registerUser = async (
 
     res.status(201).json({
       _id: user._id,
-    
+
       name: user.name,
       email: user.email,
     });
@@ -65,7 +65,7 @@ export const loginUser = async (req: Request, res: Response) => {
     const user = await UserModel.findOne({ email });
     if (user && (await user.matchPassword(password))) {
       res.json({
-        _id : user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         token: generateToken(user),

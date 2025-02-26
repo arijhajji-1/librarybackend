@@ -290,7 +290,9 @@ describe("User Controllers", () => {
     it("should return favorite books successfully", async () => {
       const mockUser = {
         favorites: ["book1", "book2"],
-        populate: jest.fn().mockResolvedValueOnce({ favorites: ["book1", "book2"] }),
+        populate: jest
+          .fn()
+          .mockResolvedValueOnce({ favorites: ["book1", "book2"] }),
       };
       (UserModel.findById as jest.Mock).mockReturnValueOnce({
         populate: jest.fn().mockResolvedValueOnce(mockUser),

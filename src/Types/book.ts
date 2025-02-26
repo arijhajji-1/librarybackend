@@ -1,8 +1,7 @@
 import type { Types } from "mongoose";
 
 export interface Book {
-
-    title: string;
+  title: string;
   author: string;
   note?: string;
   pdfUrl: string;

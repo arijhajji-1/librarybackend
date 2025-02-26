@@ -18,5 +18,5 @@ const bookSchema: Schema<BookDocument> = new Schema({
 // Create and export the Book model.
 export const BookModel: Model<BookDocument> = mongoose.model<BookDocument>(
   "Book",
-  bookSchema
+  bookSchema,
 );

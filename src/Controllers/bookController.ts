@@ -1,6 +1,6 @@
 import { type Response } from "express";
 import type { Book } from "../Types/book";
-import {BookModel} from "../Models/book";
+import { BookModel } from "../Models/book";
 import { type AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
 
 /**
@@ -17,7 +17,7 @@ export const getBooks = async (
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const books: Book[] = await BookModel.find({ user: req.user._id}); // ✅ Récupère uniquement les livres de l'utilisateur connecté
+    const books: Book[] = await BookModel.find({ user: req.user._id }); // ✅ Récupère uniquement les livres de l'utilisateur connecté
     res.json(books);
   } catch (error) {
     console.error("❌ Error fetching books:", error);
