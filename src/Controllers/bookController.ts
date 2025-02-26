@@ -1,19 +1,19 @@
-import { type Response ,
-  type Request,
-  type NextFunction
- } from "express";
+import { type Response, type Request, type NextFunction } from "express";
 import type { Book } from "../Types/book";
 import { BookModel } from "../Models/book";
 import { type AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
-
 
 /**
  * Récupérer tous les livres
  * @param req Request
  * @param res Response
  */
-export const getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
-    try {
+export const getAllBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
     const books: Book[] = await BookModel.find(); // Récupère tous les livres
     res.json(books);
   } catch (error) {
@@ -21,7 +21,6 @@ export const getAllBooks = async (req: Request, res: Response, next: NextFunctio
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 /**
  * Récupérer tous les livres de l'utilisateur
@@ -157,7 +156,11 @@ export const updateBook = async (
  * @param req Request
  * @param res Response
  */
-export const getBook = async (req: Request, res: Response, next: NextFunction) => {
+export const getBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const book = await BookModel.findById(req.params.id);
 
@@ -165,8 +168,6 @@ export const getBook = async (req: Request, res: Response, next: NextFunction) =
       res.status(404).json({ message: "Book not found" });
       return;
     }
-
-  
 
     res.json(book);
   } catch (error) {

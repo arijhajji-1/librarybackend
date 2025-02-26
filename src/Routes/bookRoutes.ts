@@ -214,7 +214,6 @@ router.put("/update/:id", protect, updateBook);
  */
 router.delete("/delete/:id", protect, deleteBook);
 
-
 /**
  * @swagger
  * /api/books:
@@ -250,7 +249,6 @@ router.delete("/delete/:id", protect, deleteBook);
  */
 
 router.get("/all", getAllBooks);
-
 
 router.get("/:id", getBook);
 export default router;
