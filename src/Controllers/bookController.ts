@@ -1,5 +1,6 @@
 import { type Response } from "express";
-import Book, { type IBook } from "../Models/book";
+import type { Book } from "../Types/book";
+import {BookModel} from "../Models/book";
 import { type AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
 
 /**
@@ -12,7 +13,11 @@ export const getBooks = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const books: IBook[] = await Book.find({ user: req.user._id }); // ✅ Récupère uniquement les livres de l'utilisateur connecté
+    if (!req.user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const books: Book[] = await BookModel.find({ user: req.user._id}); // ✅ Récupère uniquement les livres de l'utilisateur connecté
     res.json(books);
   } catch (error) {
     console.error("❌ Error fetching books:", error);
@@ -40,12 +45,12 @@ export const addBook = async (
     }
 
     const pdfUrl = req.file.path; // Multer saves file path
-    const book = new Book({
+    const book = new BookModel({
       title,
       author,
       note,
       pdfUrl,
-      user: req.user._id, // ✅ Ensure the book has a user
+      user: req.user ? req.user._id : undefined, // ✅ Ensure the book has a user
     });
 
     await book.save();
@@ -66,7 +71,7 @@ export const deleteBook = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const book = await Book.findById(req.params.id);
+    const book = await BookModel.findById(req.params.id);
 
     if (!book) {
       res.status(404).json({ message: "Book not found" });
@@ -74,7 +79,7 @@ export const deleteBook = async (
     }
 
     // ✅ Vérification que l'utilisateur est bien le propriétaire du livre
-    if (book.user.toString() !== req.user._id.toString()) {
+    if (!req.user || book.user.toString() !== req.user._id.toString()) {
       res
         .status(403)
         .json({ message: "You are not authorized to delete this book" });
@@ -100,7 +105,7 @@ export const updateBook = async (
 ): Promise<void> => {
   try {
     const { title, author, note } = req.body;
-    const book = await Book.findById(req.params.id);
+    const book = await BookModel.findById(req.params.id);
 
     if (!book) {
       res.status(404).json({ message: "Book not found" });
@@ -108,7 +113,7 @@ export const updateBook = async (
     }
 
     // ✅ Vérification que l'utilisateur est bien le propriétaire du livre
-    if (book.user.toString() !== req.user._id.toString()) {
+    if (!req.user || book.user.toString() !== req.user._id.toString()) {
       res
         .status(403)
         .json({ message: "You are not authorized to update this book" });
@@ -137,7 +142,7 @@ export const getBook = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const book = await Book.findById(req.params.id);
+    const book = await BookModel.findById(req.params.id);
 
     if (!book) {
       res.status(404).json({ message: "Book not found" });
@@ -145,7 +150,7 @@ export const getBook = async (
     }
 
     // ✅ Vérification que l'utilisateur est bien le propriétaire du livre
-    if (book.user.toString() !== req.user._id.toString()) {
+    if (!req.user || book.user.toString() !== req.user._id.toString()) {
       res
         .status(403)
         .json({ message: "You are not authorized to view this book" });

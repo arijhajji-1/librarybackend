@@ -1,37 +1,22 @@
-import mongoose, { type Document, Schema, type Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import type { Document, Model } from "mongoose";
+import type { Book } from "../Types/book";
 
-// Interface TypeScript pour Book
-interface IBook extends Document {
-  title: string;
-  author: string;
-  note?: string;
-  pdfUrl: string;
-  lastModified: Date;
-  user: Types.ObjectId; // ✅ Toujours stocké en `ObjectId`
-}
+// Extend the IBook interface to include Mongoose document properties.
+export interface BookDocument extends Book, Document {}
 
-// Définition du schéma Mongoose
-const bookSchema = new Schema<IBook>(
-  {
-    title: { type: String, required: true },
-    author: { type: String, required: true },
-    note: { type: String },
-    pdfUrl: { type: String, required: true },
-    lastModified: { type: Date, default: Date.now },
-    user: { type: Schema.Types.ObjectId, ref: "User", required: true }, // ✅ Référence User
-  },
-  { timestamps: true },
-);
-
-// ✅ Correction : Convertir `user` en string lors de la conversion JSON
-bookSchema.set("toJSON", {
-  transform: function (doc, ret) {
-    ret.user = ret.user.toString(); // ✅ Convertir `ObjectId` en `string`
-    return ret;
-  },
+// Define the book schema using the fields from IBook.
+const bookSchema: Schema<BookDocument> = new Schema({
+  title: { type: String, required: true },
+  author: { type: String, required: true },
+  note: { type: String },
+  pdfUrl: { type: String, required: true },
+  modified: { type: Date, default: Date.now },
+  user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
 });
 
-// Création du modèle
-const Book = mongoose.model<IBook>("Book", bookSchema);
-export default Book;
-export type { IBook };
+// Create and export the Book model.
+export const BookModel: Model<BookDocument> = mongoose.model<BookDocument>(
+  "Book",
+  bookSchema
+);

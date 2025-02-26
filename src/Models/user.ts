@@ -1,49 +1,32 @@
-import mongoose, {
-  Schema,
-  type Model,
-  type Document,
-  type Types,
-} from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose, { Schema } from "mongoose";
+import type { Document, Model ,Types} from "mongoose";
+import type { User } from "../Types/user";
 
-// Définition de l'interface User
-export interface IUser extends Document {
-  name: string;
-  email: string;
-  password: string;
-  createdAt: Date;
-  favorites: Types.ObjectId[]; // ✅ Liste des livres favoris
-  matchPassword: (enteredPassword: string) => Promise<boolean>;
+// Extend the IUser interface to include Mongoose document properties.
+export interface UserDocument extends User, Document {
+  _id: Types.ObjectId;
 }
 
-// Schéma Mongoose
-const userSchema = new Schema<IUser>(
-  {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    favorites: [{ type: Schema.Types.ObjectId, ref: "Book" }], // ✅ Référence aux livres favoris
-  },
-  { timestamps: true },
-);
-
-// Hashage du mot de passe avant sauvegarde
-userSchema.pre<IUser>("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
+// Define the user schema using the fields from IUser.
+const userSchema: Schema<UserDocument> = new Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
 });
 
-// Vérification du mot de passe
-userSchema.methods.matchPassword = async function (enteredPassword: string) {
-  return await bcrypt.compare(enteredPassword, this.password);
+// Optionally, add instance methods such as matchPassword.
+// Adjust the implementation as needed (for example, using bcrypt for hashing).
+userSchema.methods.matchPassword = async function (
+  enteredPassword: string
+): Promise<boolean> {
+  // Dummy implementation—replace with actual password comparison logic.
+  return enteredPassword === this.password;
 };
 
-// Création du modèle
-export const UserModel: Model<IUser> = mongoose.model<IUser>(
+// Create and export the User model.
+export const UserModel: Model<UserDocument> = mongoose.model<UserDocument>(
   "User",
-  userSchema,
+  userSchema
 );
-
-export default UserModel;

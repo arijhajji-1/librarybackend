@@ -1,26 +1,41 @@
 import { type Request, type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { UserModel } from "../Models/user";
+import {UserModel } from "../Models/user";
+import type { IUserDocument } from "../Types/user";
 
-// 📌 Étendre `Request` pour inclure `user`
-export interface AuthRequest extends Request {
-  user?: any; // ✅ Ajoute la propriété `user` à `Request`
+// Define the shape of the decoded JWT payload.
+interface DecodedToken {
+  id: string;
+  iat?: number;
+  exp?: number;
 }
 
-// 📌 Middleware de protection JWT
+// Extend Request so it includes our custom user type.
+export interface AuthRequest extends Request {
+  user?: IUserDocument;
+}
+
+// JWT protection middleware
 export const protect = async (
   req: AuthRequest,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
-  let token;
+  let token: string | undefined;
 
   if (req.headers.authorization?.startsWith("Bearer")) {
     try {
+      // Extract the token
       token = req.headers.authorization.split(" ")[1];
-      const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
+      // Verify the token and cast it to our DecodedToken interface.
+      const decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET as string
+      ) as DecodedToken;
 
-      req.user = await UserModel.findById(decoded.id).select("-password"); // ✅ Assigne l'utilisateur à `req.user`
+      // Find the user by ID and assign it to req.user.
+      // Casting here ensures the result conforms to our IUser interface.
+      req.user = (await UserModel.findById(decoded.id).select("-password")) as unknown as IUserDocument;
 
       next();
     } catch {
