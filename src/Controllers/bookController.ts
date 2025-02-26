@@ -1,7 +1,27 @@
-import { type Response } from "express";
+import { type Response ,
+  type Request,
+  type NextFunction
+ } from "express";
 import type { Book } from "../Types/book";
 import { BookModel } from "../Models/book";
 import { type AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
+
+
+/**
+ * Récupérer tous les livres
+ * @param req Request
+ * @param res Response
+ */
+export const getAllBooks = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+    const books: Book[] = await BookModel.find(); // Récupère tous les livres
+    res.json(books);
+  } catch (error) {
+    console.error("❌ Error fetching books:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 
 /**
  * Récupérer tous les livres de l'utilisateur
@@ -133,14 +153,11 @@ export const updateBook = async (
 };
 
 /**
- *  Récupérer un livre
- * @param req  AuthRequest
- * @param res  Response
+ * Récupérer un livre
+ * @param req Request
+ * @param res Response
  */
-export const getBook = async (
-  req: AuthRequest,
-  res: Response,
-): Promise<void> => {
+export const getBook = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const book = await BookModel.findById(req.params.id);
 
@@ -149,13 +166,7 @@ export const getBook = async (
       return;
     }
 
-    // ✅ Vérification que l'utilisateur est bien le propriétaire du livre
-    if (!req.user || book.user.toString() !== req.user._id.toString()) {
-      res
-        .status(403)
-        .json({ message: "You are not authorized to view this book" });
-      return;
-    }
+  
 
     res.json(book);
   } catch (error) {

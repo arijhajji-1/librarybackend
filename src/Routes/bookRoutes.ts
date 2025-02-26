@@ -4,6 +4,8 @@ import {
   deleteBook,
   addBook,
   updateBook,
+  getAllBooks,
+  getBook,
 } from "../Controllers/bookController";
 import upload from "../middlewares/uploadMiddleware";
 import { protect } from "../middlewares/authMiddleware"; // ✅ Protection avec JWT
@@ -212,4 +214,43 @@ router.put("/update/:id", protect, updateBook);
  */
 router.delete("/delete/:id", protect, deleteBook);
 
+
+/**
+ * @swagger
+ * /api/books:
+ *   get:
+ *     summary: Récupérer tous les livres
+ *     tags: [Livres]
+ *     description: Retourne la liste de tous les livres.
+ *     responses:
+ *       200:
+ *         description: Liste des livres
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     example: "650f1e7a2d7a7a0d88b10b2a"
+ *                   title:
+ *                     type: string
+ *                     example: "The Great Gatsby"
+ *                   author:
+ *                     type: string
+ *                     example: "F. Scott Fitzgerald"
+ *                   pdfUrl:
+ *                     type: string
+ *                     example: "/uploads/gatsby.pdf"
+ *                   user:
+ *                     type: string
+ *                     example: "65d2f7..."
+ */
+
+router.get("/all", getAllBooks);
+
+
+router.get("/:id", getBook);
 export default router;
