@@ -1,7 +1,36 @@
 import { type Response, type Request, type NextFunction } from "express";
 import type { Book } from "../Types/book";
 import { BookModel } from "../Models/book";
+import { UserModel } from "../Models/user";
+import mongoose from "mongoose";
 import { type AuthRequest } from "../middlewares/authMiddleware"; // ✅ Utilisation de AuthRequest pour req.user
+
+/**
+ * Récupérer les livres favoris de l'utilisateur
+ * @param req AuthRequest
+ * @param res Response
+ */
+export const getFavoriteBooks = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Utilisateur non authentifié" });
+      return;
+    }
+    // On peut peupler le champ favorites pour récupérer les détails des livres
+    const user = await UserModel.findById(req.user._id).populate("favorites");
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+    res.json(user.favorites);
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération des favoris:", error);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
 
 /**
  * Récupérer tous les livres
@@ -173,5 +202,81 @@ export const getBook = async (
   } catch (error) {
     console.error("❌ Error fetching book:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+/**
+ * Ajouter un livre aux favoris de l'utilisateur
+ * @param req AuthRequest
+ * @param res Response
+ */
+export const addFavoriteBook = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Utilisateur non authentifié" });
+      return;
+    }
+    const { bookId } = req.params; // On récupère l'ID depuis l'URL
+    const book = await BookModel.findById(bookId);
+    if (!book) {
+      res.status(404).json({ message: "Livre non trouvé" });
+      return;
+    }
+    // Récupérer l'utilisateur depuis le modèle User
+    const user = await UserModel.findById(req.user._id);
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+    // Si le livre n'est pas déjà dans les favoris, on l'ajoute
+    const bookObjectId = new mongoose.Types.ObjectId(bookId);
+    if (!user.favorites.includes(bookObjectId)) {
+      user.favorites.push(bookObjectId);
+      await user.save();
+    }
+    res.json({
+      message: "Livre ajouté aux favoris",
+      favorites: user.favorites,
+    });
+  } catch (error) {
+    console.error("❌ Erreur lors de l'ajout aux favoris:", error);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+/**
+ * Supprimer un livre des favoris de l'utilisateur
+ * @param req AuthRequest
+ * @param res Response
+ */
+export const removeFavoriteBook = async (
+  req: AuthRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Utilisateur non authentifié" });
+      return;
+    }
+    const { bookId } = req.params;
+    const user = await UserModel.findById(req.user._id);
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur non trouvé" });
+      return;
+    }
+    const bookObjectId = new mongoose.Types.ObjectId(bookId);
+    if (user.favorites.includes(bookObjectId)) {
+      user.favorites = user.favorites.filter((id) => id.toString() !== bookId);
+      await user.save();
+    }
+    res.json({
+      message: "Livre retiré des favoris",
+      favorites: user.favorites,
+    });
+  } catch (error) {
+    console.error("❌ Erreur lors de la suppression des favoris:", error);
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };

@@ -7,5 +7,6 @@ export interface Book {
   pdfUrl: string;
   modified: Date;
   user: Types.ObjectId;
+  isFavorite?: boolean;
 }
 export interface BookDocument extends Book, Document {}

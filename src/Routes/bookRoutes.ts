@@ -6,12 +6,29 @@ import {
   updateBook,
   getAllBooks,
   getBook,
+  addFavoriteBook,
+  removeFavoriteBook,
+  getFavoriteBooks,
 } from "../Controllers/bookController";
 import upload from "../middlewares/uploadMiddleware";
-import { protect } from "../middlewares/authMiddleware"; // ✅ Protection avec JWT
+import { protect } from "../middlewares/authMiddleware";
 
 const router = express.Router();
-
+/**
+ * @swagger
+ * /api/books/favorites:
+ *   get:
+ *     summary: Récupérer les livres favoris
+ *     tags: [Livres]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des livres favoris
+ *       401:
+ *         description: Accès non autorisé
+ */
+router.get("/favorites", protect, getFavoriteBooks);
 /**
  * @swagger
  * tags:
@@ -216,7 +233,7 @@ router.delete("/delete/:id", protect, deleteBook);
 
 /**
  * @swagger
- * /api/books:
+ * /api/books/all:
  *   get:
  *     summary: Récupérer tous les livres
  *     tags: [Livres]
@@ -247,8 +264,108 @@ router.delete("/delete/:id", protect, deleteBook);
  *                     type: string
  *                     example: "65d2f7..."
  */
-
 router.get("/all", getAllBooks);
 
+/**
+ * @swagger
+ * /api/books/{id}:
+ *   get:
+ *     summary: Récupérer un livre
+ *     tags: [Livres]
+ *     description: Retourne un livre par son ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID du livre à récupérer
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Livre trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "650f1e7a2d7a7a0d88b10b2a"
+ *                 title:
+ *                   type: string
+ *                   example: "The Great Gatsby"
+ *                 author:
+ *                   type: string
+ *                   example: "F. Scott Fitzgerald"
+ *                 pdfUrl:
+ *                   type: string
+ *                   example: "/uploads/gatsby.pdf"
+ *                 user:
+ *                   type: string
+ *                   example: "65d2f7..."
+ *       404:
+ *         description: Livre non trouvé
+ */
 router.get("/:id", getBook);
+
+/**
+ * @swagger
+ * /api/books/favorites/add:
+ *   post:
+ *     summary: Ajouter un livre aux favoris
+ *     tags: [Livres]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bookId
+ *             properties:
+ *               bookId:
+ *                 type: string
+ *                 example: "6510f1e7b4c8d3e7a0d8b10b"
+ *     responses:
+ *       200:
+ *         description: Livre ajouté aux favoris
+ *       400:
+ *         description: Livre déjà dans les favoris ou données invalides
+ *       401:
+ *         description: Accès non autorisé
+ *       404:
+ *         description: Livre non trouvé
+ */
+router.put("/favorites/add/:bookId", protect, addFavoriteBook);
+
+/**
+ * @swagger
+ * /api/books/favorites/remove:
+ *   post:
+ *     summary: Supprimer un livre des favoris
+ *     tags: [Livres]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bookId
+ *             properties:
+ *               bookId:
+ *                 type: string
+ *                 example: "6510f1e7b4c8d3e7a0d8b10b"
+ *     responses:
+ *       200:
+ *         description: Livre supprimé des favoris
+ *       401:
+ *         description: Accès non autorisé
+ */
+router.put("/favorites/remove/:bookId", protect, removeFavoriteBook);
+
 export default router;

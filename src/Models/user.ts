@@ -13,7 +13,9 @@ const userSchema: Schema<UserDocument> = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
+  favorites: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Book", default: [] },
+  ],
 });
 
 // Optionally, add instance methods such as matchPassword.
