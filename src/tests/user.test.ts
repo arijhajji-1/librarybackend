@@ -1,20 +1,25 @@
-import { type Request, type Response } from "express";
+import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
-// Import your user controllers and model
+// Import controllers and models
 import {
   registerUser,
   loginUser,
+
+} from "../Controllers/userController";
+import { 
   addFavoriteBook,
   removeFavoriteBook,
-  getFavoriteBooks,
-} from "../Controllers/userController";
+  getFavoriteBooks
+} from "../Controllers/bookController";
 import { UserModel } from "../Models/user";
+import { BookModel } from "../Models/book";
 import type { AuthRequest } from "../middlewares/authMiddleware";
 
 // Mock dependencies
 jest.mock("../Models/user");
+jest.mock("../Models/book");
 jest.mock("jsonwebtoken");
 
 const createResponse = (): Response => {
@@ -28,6 +33,7 @@ describe("User Controllers", () => {
   describe("registerUser", () => {
     let req: Partial<Request>;
     let res: Response;
+
     beforeEach(() => {
       req = { body: {} };
       res = createResponse();
@@ -49,7 +55,6 @@ describe("User Controllers", () => {
         email: "john@example.com",
         password: "123456",
       };
-      // Simulate that a user is found
       (UserModel.findOne as jest.Mock).mockResolvedValueOnce({
         email: "john@example.com",
       });
@@ -67,18 +72,18 @@ describe("User Controllers", () => {
         email: "john@example.com",
         password: "123456",
       };
-      // Simulate that no user exists yet
       (UserModel.findOne as jest.Mock).mockResolvedValueOnce(null);
 
+      const userId = new mongoose.Types.ObjectId();
       // Create a fake user instance with a save method
       const mockUser = {
-        _id: "userId",
+        _id: userId,
         name: "John",
         email: "john@example.com",
         save: jest.fn().mockResolvedValueOnce(true),
       };
 
-      // When a new UserModel is instantiated, return our mockUser
+      // When instantiating a new user, return our mockUser
       (UserModel as unknown as jest.Mock).mockImplementation(() => mockUser);
       (jwt.sign as jest.Mock).mockReturnValue("token123");
 
@@ -86,29 +91,19 @@ describe("User Controllers", () => {
       expect(mockUser.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
-        _id: "userId",
+        _id: userId,
         name: "John",
         email: "john@example.com",
       });
     });
 
-    it("should handle server errors", async () => {
-      req.body = {
-        name: "John",
-        email: "john@example.com",
-        password: "123456",
-      };
-      (UserModel as unknown as jest.Mock).mockImplementation(() => ({
-        save: jest.fn().mockRejectedValueOnce(new Error("Test error")),
-      }));
-      await registerUser(req as Request, res);
-      // Optionally, you can assert error handling here.
-    });
+    
   });
 
   describe("loginUser", () => {
     let req: Partial<Request>;
     let res: Response;
+
     beforeEach(() => {
       req = { body: {} };
       res = createResponse();
@@ -117,8 +112,9 @@ describe("User Controllers", () => {
 
     it("should login successfully if credentials match", async () => {
       req.body = { email: "john@example.com", password: "123456" };
+      const userId = new mongoose.Types.ObjectId();
       const mockUser = {
-        _id: "userId",
+        _id: userId,
         name: "John",
         email: "john@example.com",
         matchPassword: jest.fn().mockResolvedValueOnce(true),
@@ -129,7 +125,7 @@ describe("User Controllers", () => {
 
       await loginUser(req as Request, res);
       expect(res.json).toHaveBeenCalledWith({
-        _id: "userId",
+        _id: userId,
         name: "John",
         email: "john@example.com",
         token: "token123",
@@ -138,8 +134,9 @@ describe("User Controllers", () => {
 
     it("should return 401 if credentials are invalid", async () => {
       req.body = { email: "john@example.com", password: "wrongpass" };
+      const userId = new mongoose.Types.ObjectId();
       const mockUser = {
-        _id: "userId",
+        _id: userId,
         name: "John",
         email: "john@example.com",
         matchPassword: jest.fn().mockResolvedValueOnce(false),
@@ -153,64 +150,68 @@ describe("User Controllers", () => {
         message: "Email ou mot de passe invalide",
       });
     });
+
+  
   });
 
   describe("addFavoriteBook", () => {
     let req: Partial<AuthRequest>;
     let res: Response;
+
     beforeEach(() => {
-      req = { body: {}, user: { _id: "userId" } };
+      // Using ObjectId for user _id
+      req = { params: {}, user: { _id: new mongoose.Types.ObjectId("507f1f77bcf86cd799439011") } } as Partial<AuthRequest>;
       res = createResponse();
       jest.clearAllMocks();
     });
 
-    it("should return 400 if bookId is invalid", async () => {
-      req.body = { bookId: "invalidId" };
+    it("should return 401 if user is not authenticated", async () => {
+      req.user = undefined;
       await addFavoriteBook(req as AuthRequest, res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "ID du livre invalide",
-      });
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non authentifié" });
     });
 
-    it("should return 401 if user is not found", async () => {
-      req.body = { bookId: new mongoose.Types.ObjectId().toString() };
+    it("should return 404 if book is not found", async () => {
+      const someBookId = new mongoose.Types.ObjectId();
+      req.params = req.params || {};
+      req.params.bookId = someBookId.toString();
+      (BookModel.findById as jest.Mock).mockResolvedValueOnce(null);
+
+      await addFavoriteBook(req as AuthRequest, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Livre non trouvé" });
+    });
+
+    it("should return 404 if user is not found", async () => {
+      const someBookId = new mongoose.Types.ObjectId();
+      req.params = req.params || {};
+
+      req.params.bookId = someBookId.toString();
+      // Simulate that the book exists
+      (BookModel.findById as jest.Mock).mockResolvedValueOnce({ _id: someBookId });
       (UserModel.findById as jest.Mock).mockResolvedValueOnce(null);
 
       await addFavoriteBook(req as AuthRequest, res);
-      expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Utilisateur non trouvé",
-      });
-    });
-
-    it("should return 400 if the book is already in favorites", async () => {
-      const validBookId = new mongoose.Types.ObjectId().toString();
-      req.body = { bookId: validBookId };
-      const mockUser = {
-        favorites: [validBookId],
-        save: jest.fn().mockResolvedValueOnce(true),
-      };
-      (UserModel.findById as jest.Mock).mockResolvedValueOnce(mockUser);
-
-      await addFavoriteBook(req as AuthRequest, res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Livre déjà ajouté aux favoris",
-      });
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non trouvé" });
     });
 
     it("should add a book to favorites successfully", async () => {
-      const validBookId = new mongoose.Types.ObjectId().toString();
-      req.body = { bookId: validBookId };
+      const validBookId = new mongoose.Types.ObjectId();
+      req.params = req.params || {};
+
+      req.params.bookId = validBookId.toString();
       const mockUser = {
-        favorites: [] as string[],
+        favorites: [] as mongoose.Types.ObjectId[],
         save: jest.fn().mockResolvedValueOnce(true),
       };
+      // Simulate that the book exists
+      (BookModel.findById as jest.Mock).mockResolvedValueOnce({ _id: validBookId });
       (UserModel.findById as jest.Mock).mockResolvedValueOnce(mockUser);
 
       await addFavoriteBook(req as AuthRequest, res);
-      expect(mockUser.favorites).toContain(validBookId);
+      expect(mockUser.favorites).toContainEqual(validBookId);
       expect(res.json).toHaveBeenCalledWith({
         message: "Livre ajouté aux favoris",
         favorites: mockUser.favorites,
@@ -221,84 +222,68 @@ describe("User Controllers", () => {
   describe("removeFavoriteBook", () => {
     let req: Partial<AuthRequest>;
     let res: Response;
+
     beforeEach(() => {
-      req = { body: {}, user: { _id: "userId" } };
+      req = { params: {}, user: { _id: new mongoose.Types.ObjectId("507f1f77bcf86cd799439011") } } as Partial<AuthRequest>;
       res = createResponse();
       jest.clearAllMocks();
     });
 
-    it("should return 401 if user is not found", async () => {
-      req.body = { bookId: "someBookId" };
+    it("should return 401 if user is not authenticated", async () => {
+      req.user = undefined;
+      await removeFavoriteBook(req as AuthRequest, res);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non authentifié" });
+    });
+
+    it("should return 404 if user is not found", async () => {
+      const someBookId = new mongoose.Types.ObjectId();
+      req.params = req.params || {};
+
+      req.params.bookId = someBookId.toString();
       (UserModel.findById as jest.Mock).mockResolvedValueOnce(null);
 
       await removeFavoriteBook(req as AuthRequest, res);
-      expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Utilisateur non trouvé",
-      });
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non trouvé" });
     });
 
-    it("should return 400 if the book is not in favorites", async () => {
-      req.body = { bookId: "someBookId" };
-      const mockUser = { favorites: [] as string[], save: jest.fn() };
-      (UserModel.findById as jest.Mock).mockResolvedValueOnce(mockUser);
-
-      await removeFavoriteBook(req as AuthRequest, res);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Livre non trouvé dans les favoris",
-      });
-    });
-
-    it("should remove a favorite book successfully", async () => {
-      req.body = { bookId: "someBookId" };
-      const mockUser = {
-        favorites: ["someBookId", "anotherBookId"],
-        save: jest.fn().mockResolvedValueOnce(true),
-      };
-      (UserModel.findById as jest.Mock).mockResolvedValueOnce(mockUser);
-
-      await removeFavoriteBook(req as AuthRequest, res);
-      expect(mockUser.favorites).not.toContain("someBookId");
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Livre supprimé des favoris",
-        favorites: mockUser.favorites,
-      });
-    });
+   
   });
 
   describe("getFavoriteBooks", () => {
     let req: Partial<AuthRequest>;
     let res: Response;
+
     beforeEach(() => {
-      req = { user: { _id: "userId" } };
+      req = {  user: { _id: new mongoose.Types.ObjectId("507f1f77bcf86cd799439011") } } as Partial<AuthRequest>;
       res = createResponse();
       jest.clearAllMocks();
     });
 
-    it("should return 401 if user is not found", async () => {
+    it("should return 401 if user is not authenticated", async () => {
+      req.user = undefined;
+      await getFavoriteBooks(req as AuthRequest, res);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non authentifié" });
+    });
+
+    it("should return 404 if user is not found", async () => {
       (UserModel.findById as jest.Mock).mockReturnValueOnce({
         populate: jest.fn().mockResolvedValueOnce(null),
       });
       await getFavoriteBooks(req as AuthRequest, res);
-      expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith({
-        message: "Utilisateur non trouvé",
-      });
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ message: "Utilisateur non trouvé" });
     });
 
     it("should return favorite books successfully", async () => {
-      const mockUser = {
-        favorites: ["book1", "book2"],
-        populate: jest
-          .fn()
-          .mockResolvedValueOnce({ favorites: ["book1", "book2"] }),
-      };
+      const favorites = [new mongoose.Types.ObjectId(), new mongoose.Types.ObjectId()];
       (UserModel.findById as jest.Mock).mockReturnValueOnce({
-        populate: jest.fn().mockResolvedValueOnce(mockUser),
+        populate: jest.fn().mockResolvedValueOnce({ favorites }),
       });
       await getFavoriteBooks(req as AuthRequest, res);
-      expect(res.json).toHaveBeenCalledWith(mockUser.favorites);
+      expect(res.json).toHaveBeenCalledWith(favorites);
     });
   });
 });

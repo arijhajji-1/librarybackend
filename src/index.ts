@@ -5,6 +5,8 @@ import bookRoutes from "./Routes/bookRoutes";
 import userRoutes from "./Routes/userRoutes";
 import mongoose from "mongoose";
 import { setupSwagger } from "./swagger";
+import path from "path";
+
 
 dotenv.config();
 
@@ -26,6 +28,9 @@ if (process.env.NODE_ENV !== "test") {
 export const app = express();
 app.use(express.json());
 app.use(cors());
+app.use('uploads/', express.static(path.join(__dirname, 'uploads')));
+
+
 
 setupSwagger(app); // ✅ Setup Swagger documentation
 
