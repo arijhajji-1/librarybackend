@@ -1,11 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import { BookModel } from "../Models/book";
-import {
-  getBooks,
-  addBook,
- 
-} from "../Controllers/bookController";
+import { getBooks, addBook } from "../Controllers/bookController";
 import type { AuthRequest } from "../middlewares/authMiddleware";
 
 // Mock dependency
@@ -23,7 +19,9 @@ describe("Book Controllers ", () => {
     let req: Partial<AuthRequest>;
     let res: Response;
     beforeEach(() => {
-      req = { user: { _id: new mongoose.Types.ObjectId() } } as Partial<AuthRequest>;
+      req = {
+        user: { _id: new mongoose.Types.ObjectId() },
+      } as Partial<AuthRequest>;
       res = createResponse();
       jest.clearAllMocks();
     });
@@ -37,8 +35,18 @@ describe("Book Controllers ", () => {
 
     it("returns books for the authenticated user", async () => {
       const books = [
-        { title: "Book 1", author: "Author 1", pdfUrl: "path/to/pdf", user: req.user ? req.user._id : new mongoose.Types.ObjectId() },
-        { title: "Book 2", author: "Author 2", pdfUrl: "path/to/pdf", user: req.user ? req.user._id : new mongoose.Types.ObjectId() },
+        {
+          title: "Book 1",
+          author: "Author 1",
+          pdfUrl: "path/to/pdf",
+          user: req.user ? req.user._id : new mongoose.Types.ObjectId(),
+        },
+        {
+          title: "Book 2",
+          author: "Author 2",
+          pdfUrl: "path/to/pdf",
+          user: req.user ? req.user._id : new mongoose.Types.ObjectId(),
+        },
       ];
       (BookModel.find as jest.Mock).mockResolvedValueOnce(books);
       await getBooks(req as AuthRequest, res);
@@ -71,7 +79,7 @@ describe("Book Controllers ", () => {
     it("adds a book successfully", async () => {
       req.body = { title: "Book Title", author: "Author", note: "A note" };
       req.file = { path: "path/to/pdf" } as any; //eslint-disable-line
-  
+
       const bookId = new mongoose.Types.ObjectId();
       // Minimal book mock (cast as any)
       const mockBook = {
@@ -82,7 +90,7 @@ describe("Book Controllers ", () => {
         user: req.user ? req.user._id : undefined,
         save: jest.fn(),
       };
-     
+
       (BookModel as unknown as jest.Mock).mockImplementation(() => mockBook);
       await addBook(req as AuthRequest, res);
       expect(mockBook.save).toHaveBeenCalled();
