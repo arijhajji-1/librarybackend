@@ -92,24 +92,23 @@ docker-compose up --build
 
 ### Utilisateurs
 
-| Méthode  | Endpoint                      | Description                                     |
-| -------- | ----------------------------- | ----------------------------------------------- |
-| `POST`   | `/api/users/register`         | Enregistrer un nouvel utilisateur               |
-| `POST`   | `/api/users/login`            | Connexion d'un utilisateur                      |
-| `POST`   | `/api/users/favorites/add`    | Ajouter un livre aux favoris de l'utilisateur   |
-| `DELETE` | `/api/users/favorites/remove` | Supprimer un livre des favoris de l'utilisateur |
-| `GET`    | `/api/users/favorites`        | Récupérer les livres favoris de l'utilisateur   |
-|          |
+| Méthode | Endpoint              | Description                       |
+| ------- | --------------------- | --------------------------------- |
+| `POST`  | `/api/users/register` | Enregistrer un nouvel utilisateur |
+| `POST`  | `/api/users/login`    | Connexion d'un utilisateur        |
 
 ### Livres
 
-| Méthode  | Endpoint                | Description                                |
-| -------- | ----------------------- | ------------------------------------------ |
-| `GET`    | `/api/books`            | Récupérer tous les livres de l'utilisateur |
-| `GET`    | `/api/books/:id`        | Récupérer un livre spécifique              |
-| `POST`   | `/api/books/add`        | Ajouter un livre (PDF)                     |
-| `PUT`    | `/api/books/update/:id` | Mettre à jour un livre                     |
-| `DELETE` | `/api/books/delete/:id` | Supprimer un livre                         |
+| Méthode  | Endpoint                              | Description                                     |
+| -------- | ------------------------------------- | ----------------------------------------------- |
+| `GET`    | `/api/books`                          | Récupérer tous les livres de l'utilisateur      |
+| `GET`    | `/api/books/:id`                      | Récupérer un livre spécifique                   |
+| `POST`   | `/api/books/add`                      | Ajouter un livre (PDF)                          |
+| `PUT`    | `/api/books/update/:id`               | Mettre à jour un livre                          |
+| `DELETE` | `/api/books/delete/:id`               | Supprimer un livre                              |
+| `POST`   | `/api/books/favorites/add/:bookId`    | Ajouter un livre aux favoris de l'utilisateur   |
+| `DELETE` | `/api/books/favorites/remove/:bookId` | Supprimer un livre des favoris de l'utilisateur |
+| `GET`    | `/api/books/favorites`                | Récupérer les livres favoris de l'utilisateur   |
 
 🛠 **Documentation complète disponible sur :**
 
@@ -127,17 +126,6 @@ Lancer les tests unitaires avec :
 
 pnpm test
 ```
-
----
-
-## 🛡 **Husky - Vérification avant Commit**
-
-Ce projet utilise **Husky** pour garantir un code propre :
-
-- **Prettier & ESLint** s'exécutent avant chaque commit.
-- **Les tests doivent réussir** avant de pouvoir pousser du code.
-
-Exécuter manuellement :
 
 ---
 
