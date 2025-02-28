@@ -19,7 +19,6 @@ export const getFavoriteBooks = async (
       res.status(401).json({ message: "Utilisateur non authentifié" });
       return;
     }
-    // On peut peupler le champ favorites pour récupérer les détails des livres
     const user = await UserModel.findById(req.user._id).populate("favorites");
     if (!user) {
       res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -92,13 +91,13 @@ export const addBook = async (
       return;
     }
 
-    const pdfUrl = req.file.path; // Multer saves file path
+    const pdfUrl = req.file.path;
     const book = new BookModel({
       title,
       author,
       note,
       pdfUrl,
-      user: req.user ? req.user._id : undefined, // ✅ Ensure the book has a user
+      user: req.user ? req.user._id : undefined,
     });
 
     await book.save();

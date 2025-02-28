@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 
-// Import controllers and models
 import { registerUser, loginUser } from "../Controllers/userController";
 import {
   addFavoriteBook,
@@ -13,7 +12,6 @@ import { UserModel } from "../Models/user";
 import { BookModel } from "../Models/book";
 import type { AuthRequest } from "../middlewares/authMiddleware";
 
-// Mock dependencies
 jest.mock("../Models/user");
 jest.mock("../Models/book");
 jest.mock("jsonwebtoken");
@@ -37,7 +35,7 @@ describe("User Controllers", () => {
     });
 
     it("should return 400 if required fields are missing", async () => {
-      req.body = { name: "John", email: "john@example.com" }; // missing password
+      req.body = { name: "John", email: "john@example.com" };
       await registerUser(req as Request, res);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
@@ -71,7 +69,6 @@ describe("User Controllers", () => {
       (UserModel.findOne as jest.Mock).mockResolvedValueOnce(null);
 
       const userId = new mongoose.Types.ObjectId();
-      // Create a fake user instance with a save method
       const mockUser = {
         _id: userId,
         name: "John",
@@ -79,7 +76,6 @@ describe("User Controllers", () => {
         save: jest.fn().mockResolvedValueOnce(true),
       };
 
-      // When instantiating a new user, return our mockUser
       (UserModel as unknown as jest.Mock).mockImplementation(() => mockUser);
       (jwt.sign as jest.Mock).mockReturnValue("token123");
 
@@ -151,7 +147,6 @@ describe("User Controllers", () => {
     let res: Response;
 
     beforeEach(() => {
-      // Using ObjectId for user _id
       req = {
         params: {},
         user: { _id: new mongoose.Types.ObjectId("507f1f77bcf86cd799439011") },
@@ -185,7 +180,6 @@ describe("User Controllers", () => {
       req.params = req.params || {};
 
       req.params.bookId = someBookId.toString();
-      // Simulate that the book exists
       (BookModel.findById as jest.Mock).mockResolvedValueOnce({
         _id: someBookId,
       });
@@ -207,7 +201,6 @@ describe("User Controllers", () => {
         favorites: [] as mongoose.Types.ObjectId[],
         save: jest.fn().mockResolvedValueOnce(true),
       };
-      // Simulate that the book exists
       (BookModel.findById as jest.Mock).mockResolvedValueOnce({
         _id: validBookId,
       });

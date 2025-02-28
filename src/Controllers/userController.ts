@@ -1,8 +1,6 @@
 import { type Request, type Response } from "express";
 import type { UserDocument } from "../Models/user";
 import { UserModel } from "../Models/user";
-import mongoose from "mongoose";
-import { type AuthRequest } from "../middlewares/authMiddleware";
 import jwt from "jsonwebtoken";
 
 /**

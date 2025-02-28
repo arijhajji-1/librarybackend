@@ -13,7 +13,7 @@
     "prettier:check": "npx prettier --check .",
     "prepare": "husky install",
     "ci": "pnpm run lint && pnpm run prettier-write && pnpm run build",
-    "lci": " pnpm run prettier:write && pnpm run lint"
+    "lci": " pnpm run prettier:write && pnpm run lint && pnpm run test"
   },
   "keywords": [],
   "author": "",
